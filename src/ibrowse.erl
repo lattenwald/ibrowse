@@ -120,8 +120,8 @@
 -include("ibrowse.hrl").
 -include_lib("stdlib/include/ms_transform.hrl").
 
--define(DEF_MAX_SESSIONS,100).
--define(DEF_MAX_PIPELINE_SIZE,100).
+-define(DEF_MAX_SESSIONS,500).
+-define(DEF_MAX_PIPELINE_SIZE,500).
 -define(DEF_MAX_ATTEMPTS,3).
 
 %%====================================================================
