@@ -173,7 +173,7 @@ handle_call({send_req, _}, _From, #state{is_closing = true} = State) ->
     {reply, {error, connection_closing}, State};
 
 handle_call({send_req, _}, _From, #state{proc_state = ?dead_proc_walking} = State) ->
-    shutting_down(State),    
+    shutting_down(State),
     {reply, {error, connection_closing}, State};
 
 handle_call({send_req, {Url, Headers, Method, Body, Options, Timeout}},
@@ -577,7 +577,7 @@ do_connect(Host, Port, Options, #state{is_ssl      = true,
         ssl:connect(Host, Port, get_sock_options(Host, Options, SSLOptions), Timeout);
       _ ->
         case ibrowse_socks5:connect(Host, Port, Options, Sock_options, Timeout) of
-          {ok, Socket} -> 
+          {ok, Socket} ->
             ssl:connect(Socket, get_sock_options(Host, Options, SSLOptions), Timeout);
           Else ->
             Else
@@ -871,7 +871,11 @@ send_req_1(From,
     cancel_timer(State#state.inactivity_timer_ref, {eat_message, timeout}),
     ReqId = make_req_id(),
     Resp_format = get_value(response_format, Options, list),
-    Caller_socket_options = get_value(socket_options, Options, []),
+    Caller_socket_options =
+        lists:filter(
+          fun({ip, _}) -> false;
+             (_)       -> true
+          end, get_value(socket_options, Options, [])),
     {StreamTo, Caller_controls_socket} =
         case get_value(stream_to, Options, undefined) of
             {Caller, once} when is_pid(Caller) or
