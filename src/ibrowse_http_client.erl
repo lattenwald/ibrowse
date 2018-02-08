@@ -173,7 +173,7 @@ handle_call({send_req, _}, _From, #state{is_closing = true} = State) ->
     {reply, {error, connection_closing}, State};
 
 handle_call({send_req, _}, _From, #state{proc_state = ?dead_proc_walking} = State) ->
-    shutting_down(State),
+    shutting_down(State),    
     {reply, {error, connection_closing}, State};
 
 handle_call({send_req, {Url, Headers, Method, Body, Options, Timeout}},
@@ -577,7 +577,7 @@ do_connect(Host, Port, Options, #state{is_ssl      = true,
         ssl:connect(Host, Port, get_sock_options(Host, Options, SSLOptions), Timeout);
       _ ->
         case ibrowse_socks5:connect(Host, Port, Options, Sock_options, Timeout) of
-          {ok, Socket} ->
+          {ok, Socket} -> 
             ssl:connect(Socket, get_sock_options(Host, Options, SSLOptions), Timeout);
           Else ->
             Else
@@ -594,11 +594,7 @@ do_connect(Host, Port, Options, _State, Timeout) ->
     end.
 
 get_sock_options(Host, Options, SSLOptions) ->
-    Caller_socket_options =
-        lists:filter(
-          fun({ip, _}) -> false;
-             (_)       -> true
-          end, get_value(socket_options, Options, [])),
+    Caller_socket_options = get_value(socket_options, Options, []),
     Ipv6Options = case is_ipv6_host(Host) of
         true ->
             [inet6];
